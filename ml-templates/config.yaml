@@ -10,7 +10,7 @@ spec:
   tasks:
   - name: h2o-test
     resources:
-    - command: python example.py {{ .app_name }}-h2o-flow --port 80
+    - command: python src/example.py {{ .app_name }}-h2o-flow --port 80
       default_volume_mapping: true
       images:
         cpu: kuberlab/h2o.ai:latest
