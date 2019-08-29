@@ -66,8 +66,12 @@ spec:
     mountPath: /notebooks
     name: code
     subPath: code
-  - name: facenet
+  - name: data
+    {{- if .dataset.value }}
     datasetFS:
       workspace: {{ .dataset.workspace }}
       dataset: {{ .dataset.value }}
       version: {{ .dataset.version }}
+    {{- else }}
+    clusterStorage: {{ .storage.value }}
+    {{- end }}
