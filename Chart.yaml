@@ -1,0 +1,14 @@
+Description: H20 machine learning platform
+Engine: gotpl
+Home: https://kibernetika.ai
+Keywords:
+- kuberlab
+- h2o
+- template
+- kibernetika
+Maintainers:
+- Email: support@kuberlab.com
+  Name: kuberlab
+Name: h2o.ai
+Type: mlapp-v2
+Version: 1.0.0

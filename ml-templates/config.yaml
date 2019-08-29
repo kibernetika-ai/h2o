@@ -1,0 +1,73 @@
+kind: MLApp
+metadata:
+  name: openvino-facenet
+spec:
+  default_mount_path: /notebooks
+  default_read_only: false
+  package_manager: pip3
+  packages:
+  - manager: pip3
+  tasks:
+  - name: h2o-test
+    resources:
+    - command: python align_dataset_mtcnn.py
+        $FACES_DIR $TRAINING_DIR/aligned-images
+        --image_size 160
+        --margin 32
+        --complementary
+      default_volume_mapping: true
+      images:
+        cpu: kuberlab/serving:latest-openvino
+        gpu: kuberlab/serving:latest-openvino-gpu
+      name: worker
+      replicas: 1
+      resources:
+        limits:
+          cpu: "2"
+          memory: 8Gi
+        requests:
+          cpu: 100m
+          memory: 64Mi
+      restartPolicy: Never
+      workDir: $SRC_DIR
+
+  uix:
+  - default_volume_mapping: true
+    displayName: H20 Flow
+    images:
+      cpu: kuberlab/h2o.ai:latest
+    name: h2o-flow
+    ports:
+    - name: http
+      port: 54321
+      protocol: TCP
+      targetPort: 54321
+    resources:
+      limits:
+        cpu: "2"
+        memory: 4Gi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+  volumes:
+  - clusterStorage: '{{ .storage.value }}'
+    name: training
+  - gitRepo:
+      repository: {{ gitRepo .src.value }}
+      accountId: '{{ .src.accountId }}'
+      revision: '{{ .src.revision }}'
+    name: src
+    subPath: {{ gitSubPath .src.value }}
+  - clusterStorage: '{{ .storage.value }}'
+    isLibDir: true
+    name: lib
+  - clusterStorage: '{{ .storage.value }}'
+    mountPath: /notebooks
+    name: code
+    subPath: code
+  - name: facenet
+    datasetFS:
+      workspace: {{ .dataset.workspace }}
+      dataset: {{ .dataset.value }}
+      version: {{ .dataset.version }}
