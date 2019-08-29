@@ -1,6 +1,6 @@
 kind: MLApp
 metadata:
-  name: openvino-facenet
+  name: h2o-ai
 spec:
   default_mount_path: /notebooks
   default_read_only: false
@@ -10,15 +10,11 @@ spec:
   tasks:
   - name: h2o-test
     resources:
-    - command: python align_dataset_mtcnn.py
-        $FACES_DIR $TRAINING_DIR/aligned-images
-        --image_size 160
-        --margin 32
-        --complementary
+    - command: python example.py {{ .app_name }}-h2o-flow --port 80
       default_volume_mapping: true
       images:
-        cpu: kuberlab/serving:latest-openvino
-        gpu: kuberlab/serving:latest-openvino-gpu
+        cpu: kuberlab/h2o.ai:latest
+        gpu: kuberlab/h2o.ai:latest
       name: worker
       replicas: 1
       resources:
@@ -39,7 +35,7 @@ spec:
     name: h2o-flow
     ports:
     - name: http
-      port: 54321
+      port: 80
       protocol: TCP
       targetPort: 54321
     resources:
