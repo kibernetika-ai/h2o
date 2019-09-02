@@ -27,7 +27,7 @@ def main():
     prostate.describe()
 
     # Randomly split the dataset into ~70/30, training/test sets
-    lient.update_task_info({
+    client.update_task_info({
         'test_train': 0.7,
         'learn_rate': 0.2,
     })
