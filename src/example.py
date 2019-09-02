@@ -1,6 +1,7 @@
 import argparse
 
 import h2o
+from mlboardclient.api import client
 
 
 def parse_args():
@@ -26,6 +27,11 @@ def main():
     prostate.describe()
 
     # Randomly split the dataset into ~70/30, training/test sets
+    lient.update_task_info({
+        'test_train': 0.7,
+        'learn_rate': 0.2,
+    })
+
     train, test = prostate.split_frame(ratios=[0.70])
 
     # Convert the response columns to factors (for binary classification problems)
@@ -54,6 +60,14 @@ def main():
     # Show default performance metrics
     performance = prostate_gbm.model_performance(test)
     performance.show()
+    
+    client.update_task_info({
+        'mse': performance.mse(),
+        'rmse': performance.rmse(),
+        'auc':performance.auc(),
+        'gini':performance.gini(),
+        'logloss':performance.logloss(),
+    })
 
 
 if __name__ == '__main__':
